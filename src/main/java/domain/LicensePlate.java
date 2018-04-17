@@ -10,4 +10,9 @@ public class LicensePlate {;
     public void setLicensePlate(String Licenseplate){
         this.LicensePlate = Licenseplate;
     }
+
+    @Override
+    public String toString() {
+        return LicensePlate;
+    }
 }
