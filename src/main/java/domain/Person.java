@@ -60,11 +60,11 @@ public class Person {
     }
 
     public List<LicensePlate> getPlates() {
-        
+        return plates;
     }
 
     @Override
     public String toString() {
-        return firstName + " " + lastName +": "+rNumber + " registered license plates: " + plates.;
+        return firstName + " " + lastName +": "+rNumber + " registered license plates: " + plates;
     }
 }

@@ -11,6 +11,8 @@ public class LicensePlateDB {
 
     public LicensePlateDB(){
         persondb = new ArrayList<Person>();
+        persondb.add(new Person(new LicensePlate("1ABC123")));
+        persondb.add(new Person(new LicensePlate("1RUR907")));
     }
 
     public List<Person> getPersondb() {
@@ -23,5 +25,9 @@ public class LicensePlateDB {
 
     public void removePerson(Person person){
         persondb.remove(person);
+    }
+
+    public boolean contains(LicensePlate plate){
+        return persondb.stream().map(p -> p.getPlates()).anyMatch(l -> l.contains(plate));
     }
 }
