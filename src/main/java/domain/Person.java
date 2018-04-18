@@ -74,6 +74,12 @@ public class Person {
 
     @Override
     public String toString() {
-        return firstName + " " + lastName +": "+rNumber + " registered license plates: " + plates;
+        return "Person{" +
+                "firstName='" + firstName + '\'' +
+                ", lastName='" + lastName + '\'' +
+                ", rNumber='" + rNumber + '\'' +
+                ", plates=" + plates +
+                ", plateinside=" + plateinside +
+                '}';
     }
 }

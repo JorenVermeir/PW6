@@ -6,6 +6,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import db.LicensePlateDB;
 import domain.AcceptType;
 import domain.LicensePlate;
+import domain.LicensePlateResult;
 import domain.Person;
 import org.apache.http.HttpResponse;
 
@@ -57,55 +58,22 @@ public class LicenseServlet  extends HttpServlet {
 
     private void doScan(HttpServletRequest request, HttpServletResponse response) {
         String plates = request.getParameter("plates");
-        //System.out.println(plates);
+        AcceptType returns = AcceptType.DENY;
         if (plates == null || "".equals(null)){
+            sendObject(response, returns);
             return;
         }
-        String[] platess = plates.split("-");
-        //Arrays.asList(platess).forEach(s -> System.out.println(s));
+        List<LicensePlateResult> result = Arrays.asList(plates.split("-")).stream().map(s -> new LicensePlateResult(s)).collect(Collectors.toList());
 
-        String[][] platesss = new String[10][2];
-        int i= 0;
-        for(String s : platess){
-            String[] sl = s.split(" ");
-            platesss[i][0] = sl[0];
-            platesss[i][1] = sl[1];
-            i++;
-        }
+        LicensePlateResult match = result.stream().filter(r -> r.getPrecent() >= 80 && db.contains(r.getPlate())).findFirst().orElse(null);
 
-        //Arrays.asList(platesss).forEach( a -> Arrays.asList(a).forEach(s -> System.out.println(s)));
-
-        AcceptType returns = AcceptType.DENY;
-
-        Person pr = null;
-        String pl = "";
-        for(int j=0;j<10;j++){
-            String plate = platesss[j][0];
-            if(plate != null && db.contains(new LicensePlate(plate))){
-                try{
-                    double p = Double.parseDouble(platesss[j][1]);
-                    if(p > 80){
-                        returns = AcceptType.ACCEPT;
-                        pr = db.getPersonWithPlate(new LicensePlate(plate));
-                        pl = plate;
-                        break;
-                    }else if(p > 50 && returns != AcceptType.ACCEPT){
-                        returns = AcceptType.UNSURE;
-                    }
-                }catch (NumberFormatException e){
-
-                }
-            }
-        }
-
-        if(pr != null){
-            if(pr.getPlateinside() != null && pr.getPlateinside().equals(new LicensePlate(pl))){
-                pr.setPlateinside(null);
-                System.out.println(pr + " out");
-            }else if(pr.getPlateinside() == null){
-                pr.setPlateinside(new LicensePlate(pl));
-                System.out.println(pr + " in");
-            }
+        if(match != null){
+            Person p = db.getPersonWithPlate(match.getPlate());
+            p.setPlateinside(p.getPlateinside() == null ? match.getPlate() : null);
+            System.out.println(p);
+            returns = AcceptType.ACCEPT;
+        }else if(result.stream().anyMatch(r -> r.getPrecent() >= 50 && r.getPrecent() < 80)){
+            returns = AcceptType.UNSURE;
         }
         sendObject(response, returns);
     }
