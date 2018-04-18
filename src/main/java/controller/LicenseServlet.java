@@ -6,6 +6,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import db.LicensePlateDB;
 import domain.AcceptType;
 import domain.LicensePlate;
+import domain.Person;
 import org.apache.http.HttpResponse;
 
 import javax.servlet.ServletException;
@@ -76,6 +77,8 @@ public class LicenseServlet  extends HttpServlet {
 
         AcceptType returns = AcceptType.DENY;
 
+        Person pr = null;
+        String pl = "";
         for(int j=0;j<10;j++){
             String plate = platesss[j][0];
             if(plate != null && db.contains(new LicensePlate(plate))){
@@ -83,6 +86,9 @@ public class LicenseServlet  extends HttpServlet {
                     double p = Double.parseDouble(platesss[j][1]);
                     if(p > 80){
                         returns = AcceptType.ACCEPT;
+                        pr = db.getPersonWithPlate(new LicensePlate(plate));
+                        pl = plate;
+                        break;
                     }else if(p > 50 && returns != AcceptType.ACCEPT){
                         returns = AcceptType.UNSURE;
                     }
@@ -92,6 +98,15 @@ public class LicenseServlet  extends HttpServlet {
             }
         }
 
+        if(pr != null){
+            if(pr.getPlateinside() != null && pr.getPlateinside().equals(new LicensePlate(pl))){
+                pr.setPlateinside(null);
+                System.out.println(pr + " out");
+            }else if(pr.getPlateinside() == null){
+                pr.setPlateinside(new LicensePlate(pl));
+                System.out.println(pr + " in");
+            }
+        }
         sendObject(response, returns);
     }
 

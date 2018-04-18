@@ -8,18 +8,27 @@ public class Person {
     private String lastName;
     private String rNumber;
     private List<LicensePlate> plates;
+    private LicensePlate plateinside;
+
+    public LicensePlate getPlateinside() {
+        return plateinside;
+    }
+
+    public void setPlateinside(LicensePlate plateinside) {
+        this.plateinside = plateinside;
+    }
 
     public Person(String firstName, String lastName, String rNumber, LicensePlate licensePlate){
         setFirstName(firstName);
         setLastName(lastName);
         setrNumber(rNumber);
         plates = new ArrayList<LicensePlate>();
-        plates.add(licensePlate);
+        addLicensePlate(licensePlate);
     }
 
     public Person(LicensePlate licensePlate){
         plates = new ArrayList<LicensePlate>();
-        plates.add(licensePlate);
+        addLicensePlate(licensePlate);
     }
 
 
@@ -48,7 +57,7 @@ public class Person {
     }
 
     public void addLicensePlate(LicensePlate licensePlate){
-        if(plates.size() < 3){
+        if(plates.size() <= 3){
             plates.add(licensePlate);
         } else{
             throw new IllegalArgumentException("verwijder 1 nummerplaat");
