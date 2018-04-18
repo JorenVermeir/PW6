@@ -1,0 +1,8 @@
+<component name="ArtifactManager">
+  <artifact type="war" name="PW6:war">
+    <output-path>$PROJECT_DIR$/target</output-path>
+    <root id="archive" name="PW6-1.0-SNAPSHOT.war">
+      <element id="artifact" artifact-name="PW6:war exploded" />
+    </root>
+  </artifact>
+</component>

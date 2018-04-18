@@ -1,6 +1,0 @@
-controller\LicenseServlet.class
-domain\LicensePlate.class
-domain\Person.class
-domain\AcceptType.class
-db\LicensePlateDB.class
-controller\testui.class
