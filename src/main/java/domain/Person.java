@@ -23,6 +23,10 @@ public class Person {
         addLicensePlate(licensePlate);
     }
 
+    public Person(){
+        plates = new ArrayList<LicensePlate>();
+    }
+
 
     public String getFirstName() {
         return firstName;

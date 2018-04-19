@@ -17,7 +17,7 @@ public class LicensePlateResult {
         return plate;
     }
 
-    public double getPrecent() {
+    public double getPercent() {
         return precent;
     }
 

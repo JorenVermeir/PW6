@@ -5,6 +5,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import db.LicensePlateDBInMemory;
 import domain.AcceptType;
+import domain.LicensePlate;
 import domain.LicensePlateResult;
 import domain.Person;
 import db.PersonLicensePlateDB;
@@ -29,12 +30,22 @@ public class LicenseServlet  extends HttpServlet {
     public void processRequest(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         String action = request.getParameter("action");
         if(action == null){
-            action = "scan";
+            action = "overview";
         }
         switch (action) {
             case "scan":
                 doScan(request, response);
                 break;
+            case "overview":
+                doOverview(request, response);
+                break;
+            case "addpage":
+                doAddPerson(request, response);
+                break;
+            case "add":
+                doAdd(request, response);
+                break;
+
         }
     }
 
@@ -55,33 +66,59 @@ public class LicenseServlet  extends HttpServlet {
 
     private void doScan(HttpServletRequest request, HttpServletResponse response) {
         String plates = request.getParameter("plates");
+        String confidences = request.getParameter("confidences");
+
         AcceptType returns = AcceptType.DENY;
         if (plates == null || "".equals(null)){
             sendObject(response, returns);
             return;
         }
-        List<LicensePlateResult> result = Arrays.asList(plates.split("-")).stream().map(s -> new LicensePlateResult(s)).collect(Collectors.toList());
 
-        LicensePlateResult match = result.stream().filter(r -> r.getPrecent() >= 80 && db.contains(r.getPlate())).findFirst().orElse(null);
+        //List<LicensePlateResult> result = Arrays.asList(plates.split("-")).stream().map(s -> new LicensePlateResult(s)).collect(Collectors.toList());
 
-        if(match != null){
-            Person p = db.getPersonWithPlate(match.getPlate());
-            p.setPlateinside(p.getPlateinside() == null ? match.getPlate() : null);
-            System.out.println(p);
-            returns = AcceptType.ACCEPT;
-        }else if(result.stream().anyMatch(r -> r.getPrecent() >= 50 && r.getPrecent() < 80)){
-            returns = AcceptType.UNSURE;
+        List<LicensePlate> licenseList = Arrays.asList(plates.split("-")).stream().map(s -> new LicensePlate(s)).collect(Collectors.toList());
+        List<String> confidenceList = Arrays.asList(confidences.split("-"));
+
+        for (int i = 0; i<licenseList.size();i++){
+            if(db.contains(licenseList.get(i))){
+                if((new LicensePlateResult(" "  + confidenceList.get(i))).getPercent() >= 80){
+                    returns = AcceptType.ACCEPT;
+                    break;
+                } else if((new LicensePlateResult(" "  + confidenceList.get(i))).getPercent() > 50){
+                    returns = AcceptType.UNSURE;
+                }
+            }
         }
         sendObject(response, returns);
     }
-
-    public void doIndex(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+    public void doOverview(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+        db.update();
+        request.setAttribute("db", db.getPersondb());
+        request.setAttribute("plates", db.getLicensePlates());
         request.getRequestDispatcher("index.jsp").forward(request, response);
     }
 
-    public void doOverview(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        request.setAttribute("db", db.getPersondb());
-        request.getRequestDispatcher("index.html").forward(request, response);
+    public void doAddPerson(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+        request.getRequestDispatcher("adduser.jsp").forward(request, response);
+    }
+
+    public void doAdd(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+        String firstname = request.getParameter("firstname");
+        String lastname = request.getParameter("lastname");
+        String rnumber = request.getParameter("rnumber");
+        String plate = request.getParameter("plate");
+        LicensePlate l = new LicensePlate(plate);
+
+        Person p = new Person();
+        p.setFirstName(firstname);
+        p.setLastName(lastname);
+        p.setrNumber(rnumber);
+        p.addLicensePlate(l);
+
+        db.addPerson(p);
+        doOverview(request, response);
+
+
     }
 
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {

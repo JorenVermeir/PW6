@@ -8,6 +8,8 @@ public interface PersonLicensePlateDB {
 
     List<Person> getPersondb();
 
+    List<LicensePlate> getLicensePlates();
+
     void addPerson(Person person);
 
     void removePerson(Person person);
@@ -19,4 +21,6 @@ public interface PersonLicensePlateDB {
     Person getPersonWithPlate(LicensePlate plate);
 
     Person getPersonWithRnumber(String rnumber);
+
+    void update();
 }
