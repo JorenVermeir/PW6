@@ -45,6 +45,16 @@ public class LicenseServlet  extends HttpServlet {
             case "add":
                 doAdd(request, response);
                 break;
+            case "licenseAdd":
+                doLicensePage(request, response);
+                break;
+            case "addlicense":
+                addLicence(request, response);
+                break;
+            case "genplate":
+                System.out.println("test");
+                genPlate(request, response);
+                break;
 
         }
     }
@@ -100,6 +110,35 @@ public class LicenseServlet  extends HttpServlet {
 
     public void doAddPerson(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         request.getRequestDispatcher("adduser.jsp").forward(request, response);
+    }
+
+    public void doLicensePage(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+        String rnumber = request.getParameter("rnumber");
+        request.setAttribute("rnumber", rnumber);
+        request.getRequestDispatcher("licenseadd.jsp").forward(request, response);
+
+    }
+
+    public void genPlate(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+        String test = request.getParameter("gen");
+        String url = "https://licenceplate.be/gen/";
+        response.sendRedirect(url + test);
+
+    }
+
+    public void addLicence(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+        String license = request.getParameter("license");
+        String rnumber = request.getParameter("rnumber");
+        LicensePlate l = new LicensePlate(license);
+        Person p = (Person) db.getPersonWithRnumber(rnumber);
+        if(p.getPlates().size()<3){
+            db.addLicencePlateToPerson(p, l);
+            doOverview(request, response);
+        }else{
+            request.setAttribute("error", "je hebt te veel nummerplaten bij deze gebruiker");
+            doOverview(request, response);
+        }
+        //request.getRequestDispatcher("licenseAdd.jsp").forward(request, response);
     }
 
     public void doAdd(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {

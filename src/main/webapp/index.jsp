@@ -2,6 +2,7 @@
     pageEncoding="UTF-8"%>
 
 <%@taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
+<%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
 
 <!DOCTYPE html>
 <html lang="nl">
@@ -44,6 +45,12 @@
 
 </main>
 <section>
+    <c:if test="${error != null}">
+        <div>
+            <p style="color: red;">${error}</p>
+        </div>
+    </c:if>
+
     <table id="plates">
     <tr>
         <th>Naam</th>
@@ -59,6 +66,9 @@
             <c:forEach var="plate" items="${person.plates}">
                 <td>${plate} </td>
             </c:forEach>
+            <c:if test="${fn:length(person.plates) < 3}">
+            <td><a href="controller?action=licenseAdd&rnumber=${person.rNumber}">Voeg een plaat toe</a></td>
+            </c:if>
         </tr>
     </c:forEach>
 </table>
@@ -74,6 +84,12 @@
     </table>
 </section>
 <p><a href="controller?action=addpage">Add a new person</a></p>
+
+<form action="controller?action=genplate" method="POST">
+    <p>Generete your own plate: </p><input type="text" name="gen">
+    <input type="submit" value="generate license plate">
+</form>
+
 </main>
 </body>
 </html>

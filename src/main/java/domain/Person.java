@@ -68,6 +68,10 @@ public class Person {
         return plates;
     }
 
+    public int getPlatesSize() {
+        return plates.size();
+    }
+
     public LicensePlate getPlateinside() {
         return plateinside;
     }
