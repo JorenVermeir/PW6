@@ -1,12 +1,12 @@
 package controller;
 
-import db.LicensePlateDB;
+import db.LicensePlateDBInMemory;
 import domain.LicensePlate;
 import domain.Person;
 
 public class testui {
     public static void main(String[] args){
-        LicensePlateDB db = new LicensePlateDB();
+        LicensePlateDBInMemory db = new LicensePlateDBInMemory();
 
         LicensePlate p1 = new LicensePlate("1RGH390");
         LicensePlate p2 = new LicensePlate("1PSZ063");

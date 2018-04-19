@@ -10,14 +10,6 @@ public class Person {
     private List<LicensePlate> plates;
     private LicensePlate plateinside;
 
-    public LicensePlate getPlateinside() {
-        return plateinside;
-    }
-
-    public void setPlateinside(LicensePlate plateinside) {
-        this.plateinside = plateinside;
-    }
-
     public Person(String firstName, String lastName, String rNumber, LicensePlate licensePlate){
         setFirstName(firstName);
         setLastName(lastName);
@@ -70,6 +62,14 @@ public class Person {
 
     public List<LicensePlate> getPlates() {
         return plates;
+    }
+
+    public LicensePlate getPlateinside() {
+        return plateinside;
+    }
+
+    public void setPlateinside(LicensePlate plateinside) {
+        this.plateinside = plateinside;
     }
 
     @Override
